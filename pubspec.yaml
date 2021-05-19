@@ -1,6 +1,6 @@
 name: speech_bubble
 description: A widget that emulates a speech bubble in flutter.
-version: 0.0.9
+version: 0.0.10
 homepage: https://github.com/NilsBacke/PHSpeechBubble
 
 environment:

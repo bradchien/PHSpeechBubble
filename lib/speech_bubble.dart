@@ -14,21 +14,23 @@ enum NipLocation {
 }
 
 const defaultNipHeight = 10.0;
+const defaultNipWidth = 6.0;
 
 class SpeechBubble extends StatelessWidget {
   /// Creates a widget that emulates a speech bubble.
   /// Could be used for a tooltip, or as a pop-up notification, etc.
-  SpeechBubble(
-      {Key? key,
-      required this.child,
-      this.nipLocation = NipLocation.BOTTOM,
-      this.color = Colors.redAccent,
-      this.borderRadius = 4.0,
-      this.height,
-      this.width,
-      this.padding,
-      this.nipHeight = defaultNipHeight,
-      this.offset = Offset.zero})
+  SpeechBubble({Key? key,
+    required this.child,
+    this.nipLocation = NipLocation.BOTTOM,
+    this.color = Colors.redAccent,
+    this.borderRadius = 4.0,
+    this.elevation = 1.0,
+    this.height,
+    this.width,
+    this.padding,
+    this.nipHeight = defaultNipHeight,
+    this.nipWidth = defaultNipWidth,
+    this.offset = Offset.zero})
       : super(key: key);
 
   /// The [child] contained by the [SpeechBubble]
@@ -63,52 +65,57 @@ class SpeechBubble extends StatelessWidget {
   /// The nip height
   final double nipHeight;
 
+  /// The nip width
+  final double nipWidth;
+
   final Offset offset;
+
+  final double elevation;
 
   Widget build(BuildContext context) {
     Offset? nipOffset;
     AlignmentGeometry? alignment;
-    var rotatedNipHalfHeight = getNipHeight(nipHeight) / 2;
-    var offset = nipHeight / 2 + rotatedNipHalfHeight;
+    var rotate = 0;
     switch (nipLocation) {
       case NipLocation.TOP:
-        nipOffset = Offset(0.0, -offset + rotatedNipHalfHeight);
+        nipOffset = Offset(0.0, -nipHeight);
         alignment = Alignment.topCenter;
         break;
       case NipLocation.RIGHT:
-        nipOffset = Offset(offset - rotatedNipHalfHeight, 0.0);
+        rotate = 90;
+        nipOffset = Offset(nipWidth, 0.0);
         alignment = Alignment.centerRight;
         break;
       case NipLocation.BOTTOM:
-        nipOffset = Offset(0.0, offset - rotatedNipHalfHeight);
+        rotate = 180;
+        nipOffset = Offset(0.0, nipHeight);
         alignment = Alignment.bottomCenter;
         break;
       case NipLocation.LEFT:
-        nipOffset = Offset(-offset + rotatedNipHalfHeight, 0.0);
+        rotate = 270;
+        nipOffset = Offset(-nipWidth, 0.0);
         alignment = Alignment.centerLeft;
         break;
       case NipLocation.BOTTOM_LEFT:
-        nipOffset = this.offset +
-            Offset(
-                offset - rotatedNipHalfHeight, offset - rotatedNipHalfHeight);
+        rotate = 180;
+        nipOffset =
+            this.offset + Offset(nipWidth, nipHeight);
         alignment = Alignment.bottomLeft;
         break;
       case NipLocation.BOTTOM_RIGHT:
-        nipOffset = this.offset +
-            Offset(
-                -offset + rotatedNipHalfHeight, offset - rotatedNipHalfHeight);
+        rotate = 180;
+        nipOffset =
+            this.offset + Offset(-nipWidth, nipHeight);
         alignment = Alignment.bottomRight;
         break;
       case NipLocation.TOP_LEFT:
-        nipOffset = this.offset +
-            Offset(
-                offset - rotatedNipHalfHeight, -offset + rotatedNipHalfHeight);
+        nipOffset =
+            this.offset + Offset(nipWidth, -nipHeight);
         alignment = Alignment.topLeft;
         break;
       case NipLocation.TOP_RIGHT:
-        nipOffset = this.offset +
-            Offset(
-                -offset + rotatedNipHalfHeight, -offset + rotatedNipHalfHeight);
+        nipOffset =
+            this.offset + Offset(-nipWidth, -nipHeight);
         alignment = Alignment.topRight;
         break;
       default:
@@ -118,7 +125,7 @@ class SpeechBubble extends StatelessWidget {
       alignment: alignment!,
       children: <Widget>[
         speechBubble(),
-        nip(nipOffset!),
+        nip(nipOffset!, rotate),
       ],
     );
   }
@@ -129,7 +136,7 @@ class SpeechBubble extends StatelessWidget {
         Radius.circular(borderRadius),
       ),
       color: color,
-      elevation: 1.0,
+      elevation: elevation,
       child: Container(
         height: height,
         width: width,
@@ -139,24 +146,47 @@ class SpeechBubble extends StatelessWidget {
     );
   }
 
-  Widget nip(Offset nipOffset) {
+  Widget nip(Offset nipOffset, int rotate) {
     return Transform.translate(
       offset: nipOffset,
       child: RotationTransition(
-        turns: AlwaysStoppedAnimation(45 / 360),
+        turns: AlwaysStoppedAnimation(rotate / 360),
         child: Material(
-          borderRadius: BorderRadius.all(
-            Radius.circular(1.5),
-          ),
-          color: color,
-          child: Container(
-            height: nipHeight,
-            width: nipHeight,
-          ),
+          color: Colors.transparent,
+          child: CustomPaint(
+              size: Size(nipWidth, nipHeight),
+              painter: DrawTriangleShape(color)),
         ),
       ),
     );
   }
 
   double getNipHeight(double nipHeight) => sqrt(2 * pow(nipHeight, 2));
+}
+
+class DrawTriangleShape extends CustomPainter {
+  late Paint painter;
+
+  DrawTriangleShape(Color color) {
+    painter = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var path = Path();
+
+    path.moveTo(size.width / 2, 0);
+    path.lineTo(0, size.height);
+    path.lineTo(size.width, size.height);
+    path.close();
+
+    canvas.drawPath(path, painter);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
 }
