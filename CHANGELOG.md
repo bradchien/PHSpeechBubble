@@ -1,3 +1,8 @@
+## 0.0.10 - 09-16-2021
+
+- Fix "use a deprecated version of the Android embedding" 
+- Convert this plugin to a package
+
 ## 0.0.9 - 04-10-2021
 
 - Up minimum flutter sdk
