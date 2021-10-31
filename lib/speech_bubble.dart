@@ -21,18 +21,19 @@ const defaultNipWidth = 6.0;
 class SpeechBubble extends StatelessWidget {
   /// Creates a widget that emulates a speech bubble.
   /// Could be used for a tooltip, or as a pop-up notification, etc.
-  SpeechBubble({Key? key,
-    required this.child,
-    this.nipLocation = NipLocation.BOTTOM,
-    this.color = Colors.redAccent,
-    this.borderRadius = 4.0,
-    this.elevation = 1.0,
-    this.height,
-    this.width,
-    this.padding,
-    this.nipHeight = defaultNipHeight,
-    this.nipWidth = defaultNipWidth,
-    this.offset = Offset.zero})
+  SpeechBubble(
+      {Key? key,
+      required this.child,
+      this.nipLocation = NipLocation.BOTTOM,
+      this.color = Colors.redAccent,
+      this.borderRadius = 4.0,
+      this.elevation = 1.0,
+      this.height,
+      this.width,
+      this.padding,
+      this.nipHeight = defaultNipHeight,
+      this.nipWidth = defaultNipWidth,
+      this.offset = Offset.zero})
       : super(key: key);
 
   /// The [child] contained by the [SpeechBubble]
@@ -100,24 +101,20 @@ class SpeechBubble extends StatelessWidget {
         break;
       case NipLocation.BOTTOM_LEFT:
         rotate = 180;
-        nipOffset =
-            this.offset + Offset(nipWidth, nipHeight);
+        nipOffset = this.offset + Offset(nipWidth, nipHeight);
         alignment = Alignment.bottomLeft;
         break;
       case NipLocation.BOTTOM_RIGHT:
         rotate = 180;
-        nipOffset =
-            this.offset + Offset(-nipWidth, nipHeight);
+        nipOffset = this.offset + Offset(-nipWidth, nipHeight);
         alignment = Alignment.bottomRight;
         break;
       case NipLocation.TOP_LEFT:
-        nipOffset =
-            this.offset + Offset(nipWidth, -nipHeight);
+        nipOffset = this.offset + Offset(nipWidth, -nipHeight);
         alignment = Alignment.topLeft;
         break;
       case NipLocation.TOP_RIGHT:
-        nipOffset =
-            this.offset + Offset(-nipWidth, -nipHeight);
+        nipOffset = this.offset + Offset(-nipWidth, -nipHeight);
         alignment = Alignment.topRight;
         break;
       default:
@@ -169,10 +166,11 @@ class SpeechBubble extends StatelessWidget {
 class DrawTriangleShape extends CustomPainter {
   late Paint painter;
 
-  const DrawTriangleShape(Color color) :
+  DrawTriangleShape(Color color) {
     painter = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
