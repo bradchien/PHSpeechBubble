@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+/// This enum is used to determine where the nip should be located,
+/// in relation to the bubble.
 enum NipLocation {
   TOP,
   RIGHT,
@@ -167,11 +169,10 @@ class SpeechBubble extends StatelessWidget {
 class DrawTriangleShape extends CustomPainter {
   late Paint painter;
 
-  DrawTriangleShape(Color color) {
+  const DrawTriangleShape(Color color) :
     painter = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
-  }
 
   @override
   void paint(Canvas canvas, Size size) {
