@@ -21,20 +21,20 @@ const defaultNipWidth = 6.0;
 class SpeechBubble extends StatelessWidget {
   /// Creates a widget that emulates a speech bubble.
   /// Could be used for a tooltip, or as a pop-up notification, etc.
-  SpeechBubble(
-      {Key? key,
-      required this.child,
-      this.nipLocation = NipLocation.BOTTOM,
-      this.color = Colors.redAccent,
-      this.borderRadius = 4.0,
-      this.elevation = 1.0,
-      this.height,
-      this.width,
-      this.padding,
-      this.nipHeight = defaultNipHeight,
-      this.nipWidth = defaultNipWidth,
-      this.offset = Offset.zero})
-      : super(key: key);
+  const SpeechBubble({
+    required this.child,
+    this.nipLocation = NipLocation.BOTTOM,
+    this.color = Colors.redAccent,
+    this.borderRadius = 4.0,
+    this.elevation = 1.0,
+    this.height,
+    this.width,
+    this.padding = const EdgeInsets.all(8.0),
+    this.nipHeight = defaultNipHeight,
+    this.nipWidth = defaultNipWidth,
+    this.offset = Offset.zero,
+    Key? key,
+  }) : super(key: key);
 
   /// The [child] contained by the [SpeechBubble]
   final Widget child;
@@ -46,24 +46,28 @@ class SpeechBubble extends StatelessWidget {
   final NipLocation nipLocation;
 
   /// The color of the body of the [SpeechBubble] and nip.
-  /// Defaultly red.
+  ///
+  /// Red by default.
   final Color color;
 
   /// The [borderRadius] of the [SpeechBubble].
+  ///
   /// The [SpeechBubble] is built with a
   /// circular border radius on all 4 corners.
   final double borderRadius;
 
   /// The explicitly defined height of the [SpeechBubble].
-  /// The [SpeechBubble] will defaultly enclose its [child].
+  ///
+  /// The [SpeechBubble] will by default enclose its [child].
   final double? height;
 
   /// The explicitly defined width of the [SpeechBubble].
-  /// The [SpeechBubble] will defaultly enclose its [child].
+  ///
+  /// The [SpeechBubble] will by default enclose its [child].
   final double? width;
 
   /// The padding between the child and the edges of the [SpeechBubble].
-  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry padding;
 
   /// The nip height
   final double nipHeight;
@@ -75,8 +79,9 @@ class SpeechBubble extends StatelessWidget {
 
   final double elevation;
 
+  @override
   Widget build(BuildContext context) {
-    Offset? nipOffset;
+    late final Offset nipOffset;
     AlignmentGeometry? alignment;
     var rotate = 0;
     switch (nipLocation) {
@@ -101,30 +106,34 @@ class SpeechBubble extends StatelessWidget {
         break;
       case NipLocation.BOTTOM_LEFT:
         rotate = 180;
-        nipOffset = this.offset + Offset(nipWidth, nipHeight);
+        nipOffset = offset + Offset(nipWidth, nipHeight);
         alignment = Alignment.bottomLeft;
         break;
       case NipLocation.BOTTOM_RIGHT:
         rotate = 180;
-        nipOffset = this.offset + Offset(-nipWidth, nipHeight);
+        nipOffset = offset + Offset(-nipWidth, nipHeight);
         alignment = Alignment.bottomRight;
         break;
       case NipLocation.TOP_LEFT:
-        nipOffset = this.offset + Offset(nipWidth, -nipHeight);
+        nipOffset = offset + Offset(nipWidth, -nipHeight);
         alignment = Alignment.topLeft;
         break;
       case NipLocation.TOP_RIGHT:
-        nipOffset = this.offset + Offset(-nipWidth, -nipHeight);
+        nipOffset = offset + Offset(-nipWidth, -nipHeight);
         alignment = Alignment.topRight;
         break;
       default:
+        throw ArgumentError('nipLocation could not be matched to a case.');
     }
 
     return Stack(
-      alignment: alignment!,
+      alignment: alignment,
       children: <Widget>[
         speechBubble(),
-        nip(nipOffset!, rotate),
+        nip(
+          nipOffset,
+          rotate,
+        ),
       ],
     );
   }
@@ -139,7 +148,7 @@ class SpeechBubble extends StatelessWidget {
       child: Container(
         height: height,
         width: width,
-        padding: padding ?? const EdgeInsets.all(8.0),
+        padding: padding,
         child: child,
       ),
     );
@@ -153,8 +162,9 @@ class SpeechBubble extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: CustomPaint(
-              size: Size(nipWidth, nipHeight),
-              painter: DrawTriangleShape(color)),
+            size: Size(nipWidth, nipHeight),
+            painter: DrawTriangleShape(color),
+          ),
         ),
       ),
     );
@@ -174,7 +184,7 @@ class DrawTriangleShape extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var path = Path();
+    final path = Path();
 
     path.moveTo(size.width / 2, 0);
     path.lineTo(0, size.height);
